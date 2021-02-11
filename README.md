@@ -1,0 +1,2 @@
+# szamitogepes_kepfeldolgozas
+Számítógépes képfeldolgozás
