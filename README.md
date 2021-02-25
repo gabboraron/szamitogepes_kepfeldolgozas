@@ -144,3 +144,50 @@ for(int y=0;y<b.Height;++y)
 - medián szűrő
 - simítás
 
+# EA 3
+## Nem lineáris szűrők, medián szűrő
+- impulus szerű zajokat eltávolíŧ
+- nem szélesíti ki az éleket
+- nem mindig hatékony
+ 
+## élesítés
+> élesítéshz térbeli deriváltakat használunk -> gradiens két irányból
+> - számoljuk ki x és rá merőleges y irányban a derivált értékét
+> - a két értékből sázmítsunk vektor eredőt, és annak az irányát és nagyságát is határozzuk meg.
+> 
+> ### Laplace szűrő
+> `x` irányú derivált és `y` irányú drivált összege
+> 
+ 
+## él detektálás
+> sarok pont/jellemző pont detektálás
+
+- ha éleket akarunk detektálni előbb használjunk zajszűrést
+- élkiemelés
+- éldetektálás
+- éllokalizálás
+
+euklédeszi távolság: négyzetek összegének gyöke
+
+manhattan távolság: abszolút értékben a két irány nagyságának összege
+
+### Prewitt operátor
+- átlagolás egyik irányban
+- a maszk elemek összértéke nulla
+
+
+### Canny éldetektor 
+- élkiemelés
+- nem maximumok elnyomása
+- histerézises küszöbölés
+- gauss zajos képeken
+- lépcsős képeken használható
+
+ideális éldetektálás:
+1. gauss szűréssel simitás
+2. kétirányú gradiens számítás
+3. normális és erősség számítás
+4. kiszámolja az élnormális irányát és  elvékonyítja ott a képet
+5. összeköttjük az élpontokat láncolt listákban
+6. hysteresises küszöbölés
+
