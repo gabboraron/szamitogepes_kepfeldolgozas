@@ -75,7 +75,16 @@ részekre bontás:
 
 ![motion capture](https://regi.tankonyvtar.hu/hu/tartalom/tamop412A/2011-0063_15_gepi_latas/images/02_19.png)
 
+### Miért bonyolult a számítógépes látás?
+Jelenetek megértése, még komplex és rendezetlen kép esetében is egyszerű az ember számára, a gép számára viszont a külön egységek azok amiket lát, ért, a tlejes egész az amit nem. 
 
+> **szín szerepe**:  A színek intenzitását figylehetjük, de fontos, hogy milyen színmodellt használunk ekkor, mert a használt fényintenzitás változtathat a színeken, és csalóka lehet.
+> 
+> **textúra**: a textúrák használata is jó lehet de bizonyos ismétlődést nem tud kizárni.
+> 
+> **alak szerepe**: a formák észlelése is érdekes lehet, de kérdés, hogy például az árnyék és hasonló dolgok emnnyire befolyásolják az alak értlemezését
+> 
+ 
 
 
 
@@ -247,4 +256,69 @@ ideális éldetektálás:
 4. kiszámolja az élnormális irányát és  elvékonyítja ott a képet
 5. összeköttjük az élpontokat láncolt listákban
 6. hysteresises küszöbölés
+
+# EA 4
+
+# EA 5 - vonalak detektálása
+> előzetesen feltételezzük, hogy éldetektálást végzünk, és vannak különálló pixeleink amiket meghatároztunk
+
+cél: az E(x,y) képen találjuk meg a vonalakat és határozuk meg azok egyenletét
+
+> ## [Hough transzformáció](https://hu.qaz.wiki/wiki/Hough_transform)
+> 
+> *kulcs:* használjunk paraméterekt ahol a bonyolult probléma az egyszerűbb lokális maximumok megtalálását jelenti
+> 
+> *input:* nináris kép képpontokkal
+> 
+> *Meredekség értékékeben gondolkodunk, megtalálunk egy élpontot, arra meredekséget tételezünk fel, arra vannak `m` értékei és koordinátái, amire behelyettesítünk `x`,`y`-t, ez alapján kapunk `b=-mx+y` jelleggel.*
+> 
+> ![meredekségek](https://image2.slideserve.com/4449132/hough-transzform-ci-l.jpg)
+> 
+> 1. Az `(m,b)` teret osszuk fel egy rácsalés mindenhez rendeljünk egy számlálót `c(m,b)` kezdetben 0 értékkel => `bi=y-mjx`
+> 2. minden élpixel ismert koordinátáival számoljuk ki a`b` értékét` minden lehetséges `m` mellett
+> 3. növeljök =c(mi,bi)`-t egyel
+> 4. keressünk lokális maximumokat a képen
+> 
+> kvantálás:
+> 
+> ! [kvantálás](https://image2.slideserve.com/4449132/hough-traf-kvant-l-s-l.jpg)
+> 
+> A művelet viszont 3 egymásba ágyazott ciklus, a számítási jgény kisebb, viszont az `x,y` tengelyen 0-tól végtelenig vehetünk fel értékeket amihez elég angy memória kell.
+> 
+> Az egyenes egynelet nem csak Descartesi de polár koordinátával is leírható, így a tengely meredekséget vesszük figyelembe, hogy milyen szöget zár be a függőleges tengelyel. Másik kérdés, milyen messz eszerepel az origótól (bal felső saroktól). Ez alapján az egens egyenlete: `xcosA + ysinA = p`
+> 
+> ![polár koordinás reprezentálás](https://image2.slideserve.com/4449132/hough-transzform-ci1-n.jpg)
+> 
+> Ez alapján akkor van legközelebb az oigóhoz, ha átmegy rajta, azaz 0 az értéke. A legtávolabbi pont a főátló vége, azaz a kép mérete. A szóbajövő rtékeket 0 és a képátló méretével kell tehát elheyezni sé nem 0 és végtleen között.
+> 
+> 1. készíünk egy 2D számláló tömböt a szög és a 180 fok változik, a távolság pedig a maximum képátló.
+> 2. mindne szög értkére behelyettesítünk valamilyen nvekményt használva (pl 10 fok)
+> 3. számoljuk ki minden élpontra a `p` értéket, minden kiszámolt `(A,p)` párra növeljük a sázmlálótömb értékeit.
+> 4. keressünk lokális maximumot.
+> 
+> Ez lokális maximumot és csomósodást fog adni válaszul a paramétere térben. Tehát nagyon zajos kép esetén jelentős hiba állhat fenn.
+> 
+> ![zajos képpel](https://image2.slideserve.com/4449132/vonaldetekt-l-s-p-lda-n.jpg)
+>
+> **Nehézségek**
+> 
+>  - paraméter tér felosztása, nagy felosztással nehéz különbséget teni a vonalak között, kicsivel a zaj okoz gondot
+>  - hány vonalat látunk
+> - melyi kélpont melyik vonalhoz tatozik?
+> - zaj miatt nehéz kielégítő megoldást adni
+> 
+> ### Kör illesztése
+> három ismeretlen: `(x-x0)^2 + (y-y0)^2 - r^2 = 0`
+> 
+> - 3D akkumulátor tömböt kell készíteni, dimenziók: `x0`, `y0`, `r`
+> - lokális maximumot kereesünk A tömbben
+
+gyakorlatban javasolt módszer             |  példák
+:-------------------------:|:-------------------------:
+![gyakorlatban javasolt módszer](https://image2.slideserve.com/4449132/gyakorlatban-javasolt-m-dszer-n.jpg)  |  ![példák](https://image2.slideserve.com/4449132/p-ld-k-n.jpg)
+
+ 
+
+
+
 
