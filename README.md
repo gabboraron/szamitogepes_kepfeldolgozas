@@ -431,3 +431,50 @@ gk      =EXPAND  (gk−1)+Lk
 > - Készítsük el a következő összemásolt Lc piramist:
 >   - az alma La piramisának bal részét minden szinten és a narancs Ln piramis jobb oldalát minden szinten másoljuk egybe
 > - Rekonstruáljuk a kombinált képet Lc-ből
+ 
+## transzformációk:
+> https://wiki.tum.de/display/lfdv/Spatial+Transformer+Networks
+>
+> Mindig az a kérdés hogy a világhoz viszonyítunk (globális koordináta) és a lokális rendszer csak elszenvedi a történéseket vagy lokális koordináta rendszerben vagyunk.
+ 
+
+1.Eltolás (transzláció)
+2.Forgatás (rotáció)
+3.Skálázás
+4.Elferdítés 
+
+- Képeket sokszor egymásba kell transzformálni (warping)
+- Koordinátarendszereket is gyakran egymásnak meg kell feleltetni
+- A kamera és a kép, valamint a kamera és a világ koordinátarendszerek között is kapcsolatot kell teremteni
+
+Erre keresünk hatékony reprezentációt
+
+- 2D pont közönséges koordinátái: `𝐏=[𝑥,𝑦]𝑇`
+- Homogén koordinátákkal: `𝐏=[𝑠𝑥,𝑠𝑦,𝑠]𝑇` ahol `s` a skálázófaktor
+
+**Áttérés koordinátarendszerek között**
+- Egy kép pontját egy másik kép pontjának szeretnénk megfeleltetni
+- Lokális koordinátarendszerben adott pontot, világ koordinátákba szeretnénk átképezni
+- A művelethez egyszerű mátrix-szorzást szeretnénk használni
+- Adott `P` pont, és az `M` transzformáció segítségével megkapjuk a pont `P` leírását a másik koordinátarendszerben:`𝐏=𝐌𝐏′`
+
+**Skálázás mátrix-operációként**
+
+- `𝐏=[[𝑠𝑥, 0][0,𝑠𝑦]]𝐏'`
+- origóhoz képest nyújtás: `[x,y] = [[𝑠𝑥,0][0,𝑠𝑦]][𝑥′,𝑦′] = [𝑠𝑥∙𝑥′, 𝑠𝑦∙𝑦′]`
+- forgatás síkban: `[𝑥,y]=[[cos𝜃, −sin𝜃][sin𝜃, cos𝜃]][𝑥′, 𝑦′] = [[𝑥′, cos𝜃−𝑦′sin𝜃][𝑥′, sin𝜃+𝑦′cos𝜃]]`
+- Eltolás (transzláció): `[𝑥, 𝑦, 1] = [[1, 0, 𝑥0],[0, 1, 𝑦0],[0, 0, 1]] [𝑥′, 𝑦′, 1] = [𝑥′+𝑥0, 𝑦′+𝑦0, 1]`
+  - `𝐏 = 𝐌𝐏′`, ahol homogén koordinátás leírást használunk 
+  - `𝐏 = [𝐈, 𝐭]𝐏′` ahol `I`az identitás, egységmátrix
+- Euklideszi transzformáció: 
+  - Eltolás és forgatás egy időben
+  - `𝐑` forgató almátrix, `𝐭` eltolás oszlopvektor
+  - `𝐏=[𝐑, 𝐭] 𝐏′`
+  - `𝐑 = [[cos𝜃, −sin𝜃][sin𝜃 cos𝜃]]
+  - `[𝑥, 𝑦, 1] = [[cos𝜃, −sin𝜃, 𝑥0][sin𝜃, cos𝜃, 𝑦0][0, 0, 1]][𝑥′, 𝑦′, 1]
+
+![transzformációk működése](https://miro.medium.com/max/875/1*HMz19VKei5ZsvNAVmv_OMQ.png)
+
+![transzformációk](https://wiki.tum.de/download/attachments/23568255/Selection_525.png?version=1&modificationDate=1484306252867&api=v2)
+
+
