@@ -317,8 +317,117 @@ gyakorlatban javasolt módszer             |  példák
 :-------------------------:|:-------------------------:
 ![gyakorlatban javasolt módszer](https://image2.slideserve.com/4449132/gyakorlatban-javasolt-m-dszer-n.jpg)  |  ![példák](https://image2.slideserve.com/4449132/p-ld-k-n.jpg)
 
+## Képpiramisok
+> https://regi.tankonyvtar.hu/hu/tartalom/tamop412A/2011-0063_15_gepi_latas/ch07.html
+
+- Ha az objektumok képe túl kicsi, vagy nem elég kontrasztos, akkor általában nagyobb felbontással vizsgáljuk azokat
+- Ha nagy méretűek, vagy kontrasztosak, akkor elegendő durva felbontás
+- Ha mind kicsi, mind nagy, illetve alacsony és nagy kontrasztú objektumaink egyaránt vannak a képen, előnyös lehet különböző felbontással vizsgálni azokat
+- A képpiramis olyan hatékony és egyszerű képreprezentáció, aminek segítségével a kép több felbontását használjuk
+
+Más elnevezés: Felbontás hierarchiák (Resolution hierarchies)
+
+> ### Skálázás
+> a képek méretének csökkentése a cél, minden lépésben fele méretű legyen, a környező pixeleket valamilyen interpolációval elhagyjuk, majd vissznagyítunk pl bezie splineokat használva.
+> 
+> 
+> kicsinyítés       |  vissza nagyítás
+> :-------------------------:|:-------------------------:
+> ![kicsinyítés](https://regi.tankonyvtar.hu/hu/tartalom/tamop412A/2011-0063_15_gepi_latas/images/07_06.png)  |  ![nagyítás](https://regi.tankonyvtar.hu/hu/tartalom/tamop412A/2011-0063_15_gepi_latas/images/07_07.png)
+
+Cél: képek tömör reprezentációja, gyors algoritmusok készítése
+
+A képpiramisok (= felbontás hierarchiák) a kép különböző skálázású másolataiból épülnek fel
+- A piramis minden szintje az előző szint 1/4-e
+- A magasabb szint magasabb felbontást jelent
+- A legalacsonyabb szint a legkisebb felbontású
+- (Megjegyzés: néha a szintek azonosítása éppen ellentétes e kijelentésekkel)
+- A magasabb szint pixelértékeit “redukáló” (Reduce) függvény segítségével számoljuk
+`gl= REDUCE[gl+1]`
  
+képpiramis működése             |  algorimtus maga
+:-------------------------:|:-------------------------:
+![képpiramis működése](https://regi.tankonyvtar.hu/hu/tartalom/tamop412A/2011-0063_15_gepi_latas/images/07_14.png)  |  ![algoriitmus](https://regi.tankonyvtar.hu/hu/tartalom/tamop412A/2011-0063_15_gepi_latas/images/07_15.png)
 
+**Piramisok készítése**
+1. Minden szinten van egy közelítő képünk és egy különbség (maradék) kép
+2. Az eredeti kép (amely a piramis alapja) és az ő P közelítései a közelítő piramist építik fel
+3. A maradék outputok a “maradék piramist” építik fel
+4. Mind a közelítő, mind a maradék piramisok iterációs módszerrel határozhatóak meg
+5. A P+1 szintű piramis a konstrukció algoritmusának P alkalommal történő futtatásakor keletkezik
+6. Az első iterációban az eredeti 2J x 2J méretű kép az input
+7. Ebből készül a J-1 szintű approximációs és a J szintű maradék eredmény
+8. Az iterációk során az előző iteráció eredményét használjuk az új lépés inputjaként
 
+**Minden iteráció három lépésből épül fel:**
+1. Számoljuk ki az input kép redukált felbontású közelítését. Ez szűréssel és pixelek leosztásával (downsampling by factor 2) történik
+   - Szűrő: szomszédok átlagolása, v. Gauss szűrő, stb.
+   - A közelítés pontossága függ a szűrőtől (lásd később)
+2. A kapott output pixeleinek felszorzásával (upsampling by factor 2) és szűréssel készül a közelítő kép, aminek a felbontása megegyezik az inputéval.
+   - A pixelek közötti interpolációs szűrő meghatározza, hogy mennyire jól közelítjük az inputot az 1. lépésben
+3. Számoljuk ki a 2. lépésben kapott közelítés és az 1. lépés inputjának különbségét (maradék). A különbség később az eredeti kép rekonstruálásához használható
 
+![közleítő és maradék piramis](https://regi.tankonyvtar.hu/hu/tartalom/tamop412A/2011-0063_15_gepi_latas/images/07_16.png)
 
+**Alkalmazási területek**
+- Hasonló részek keresése
+- Keressünk durva skálán, majd finomítsunk nagyobb felbontásnál
+- Élkövetés, mozgások vizsgálata
+- Minták keresése
+- Csíkok keresése
+- Nagyon fontos textúrák vizsgálatánál
+
+### Gauss piramis 1D-ben
+![gauss1d](https://regi.tankonyvtar.hu/hu/tartalom/tamop412A/2011-0063_15_gepi_latas/math/eq_07_03.gif)
+
+- szimetrikus konvolúőciós maszk: `[w(−2),w(−1),w(0),w(1),w(2)]w(i)=w(i)⇒[c,b,a,b,c]`
+- A maszk elemeinek összege`a+2b+2c=1`
+
+Minden csomópont egy adott szinten ugyanannyi összsúllyal járul hozzá a következő szinthez:
+
+![szintek súyozása](https://regi.tankonyvtar.hu/hu/tartalom/tamop412A/2011-0063_15_gepi_latas/images/07_19.png)
+
+**Konvolúciós maszkok (5 × 1)**
+
+képpiramis működése             |  algorimtus maga
+:-------------------------:|:-------------------------:
+![képletek](https://regi.tankonyvtar.hu/hu/tartalom/tamop412A/2011-0063_15_gepi_latas/math/eq_07_06.gif)![diagram](https://regi.tankonyvtar.hu/hu/tartalom/tamop412A/2011-0063_15_gepi_latas/images/07_38.png) | a = 0.4 - Gauss maszk a = 0.5 - háromszög maszk a = 3/8 - könnyen számolható maszk ![diagram](https://regi.tankonyvtar.hu/hu/tartalom/tamop412A/2011-0063_15_gepi_latas/images/07_39.png)
+
+### Laplace piramis
+- Hasonló az élszűrt képekhez
+- A legtöbb pixel 0
+- Tömörítésre is használható
+- Laplace piramis orientáció független
+
+**Laplace piramis készítése:**
+
+Gauss piramis kiszámítása: `gk,gk-1,gk-2,...g2,g1`
+
+Laplace számítása: Gauss – „visszahízlalt (Expand) előző Gauss”
+```
+Lk   =gk−EXPAND    (gk−1)
+Lk−1 =gk−1−EXPAND  (gk−2)
+Lk−2 =gk−2−EXPAND  (gk−3)
+⋮
+L1   =g1
+```
+
+**Képrekonstrukció piramisokból**
+- Az eltárolt piramisokból az eredeti kép visszaállítható
+- A Laplace piramis jól tömöríthető (a kép homogén részeinél)
+````
+g1=L1g2 =EXPAND  (g1)+L2
+g3      =EXPAND  (g2)+L3
+⋮
+gk      =EXPAND  (gk−1)+Lk
+````
+
+> **Textúra transzfer**
+>
+> ![texturatranszfer](https://regi.tankonyvtar.hu/hu/tartalom/tamop412A/2011-0063_15_gepi_latas/images/07_44.png)
+> 
+> - Készítsük el a narancs kép Laplace piramisát (Ln)
+> - Készítsük el az alma kép Laplace piramisát (La)
+> - Készítsük el a következő összemásolt Lc piramist:
+>   - az alma La piramisának bal részét minden szinten és a narancs Ln piramis jobb oldalát minden szinten másoljuk egybe
+> - Rekonstruáljuk a kombinált képet Lc-ből
