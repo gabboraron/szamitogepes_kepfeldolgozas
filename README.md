@@ -83,9 +83,107 @@ Jelenetek megértése, még komplex és rendezetlen kép esetében is egyszerű 
 > **textúra**: a textúrák használata is jó lehet de bizonyos ismétlődést nem tud kizárni.
 > 
 > **alak szerepe**: a formák észlelése is érdekes lehet, de kérdés, hogy például az árnyék és hasonló dolgok emnnyire befolyásolják az alak értlemezését
-> 
- 
 
+**Vegyük figyelembe a jelenet körülményeit**
+- Gyűjtsünk minél több adatot (képet)
+- Vegyük figyelembe a környező világ jellemzőit
+- Számíthatóság és robosztusság
+
+**A számítógépes látórendszereknél, általában az iparban:**
+- A megvilágítási feltételeket mi szabályozzuk
+- Az objektumot mi pozícionáljuk
+- Az objektum jellemzőiben rejlő lehetőségeket használjuk ki
+
+![](https://regi.tankonyvtar.hu/hu/tartalom/tamop412A/2011-0063_15_gepi_latas/images/02_31.png)
+
+**mélytanuláshoz:**
+1. rengeteg reprezentatív adat kell
+2. amit lehet tegyünk meg az adatok befolyásolására, pl megvilágítás, háttér, stb
+
+#### Gépi látás eléri-e, megelőzi-e az emberi látást?
+https://regi.tankonyvtar.hu/hu/tartalom/tamop412A/2011-0063_15_gepi_latas/ch02s03.html
+
+> - emberek “összetett” dolgokban jobbak
+> - számítógép „egyszerű” dolgokban jobb
+>
+> **a gépi látás képes megoldani:**
+> - Föld megjelenítők (3D modell)
+> - [Photo Tourism technology](http://phototour.cs.washington.edu/)
+> - Optikai karakterfelismerés (OCR): dokumentumok szkennelése, szöveggé alakítása, [rendszám felismerés](https://en.wikipedia.org/wiki/Automatic_number-plate_recognition)
+> - ujjlenyomat, arcfelismerő rendszer
+> - Objektum felismerés (mobil telefonokban)
+> - Speciális effektusok
+>   - [motion capture technika](https://www.ilm.com/)
+> - sport 
+> - Okos autók
+> - Űralkalmazás
+> - 3D terepmodellezés
+> - Akadály detektálás, helyzet követés  
+> - Autonóm robotnavigáció (Autonomous robot navigation)
+> - Számítógépes felügyelet és összeszerelés (Inspection and assembly)
+> - 3D képalkotás - MRI, CT
+> - Képvezérelt sebészet
+> 
+> https://computervisiononline.com/
+> 
+> [The Computer Vision Industry ~ David Lowe](https://www.cs.ubc.ca/~lowe/vision.html)
+
+### Adatstruktúrák a képfeldolgozásban
+> A képet alpvetően egy kétdimenziós tömbként tudjuk elképzelni, de a memóriában valójában ez egyetlen hosszú karaktersorozat. Amennyiben ez egy színes kép úgy ez egy 3 dimenziós érték R G B értékkel.
+> 
+> Ahhoz, hogy a képpontokat azonosítnai tudjuk szükségünk van koordináta rendszerre, mivel és milyen irányba mérünk értékeket? Egy ilyen pont a pixel, ami egy kis tégalalp, ami vagy szürgeésgi vagy színcsatorna szerinti intenzitás értéket jelent.
+> 
+> ![pixel](https://regi.tankonyvtar.hu/hu/tartalom/tamop412A/2011-0063_15_gepi_latas/images/03_03.png)
+ 
+> **Számítási ígény:**
+> - Tételezzünk fel egy 1024 × 1024 pixelből álló képet, ahol az intenzitást 8-biten tároljuk.
+> - Tárolási igény 2^20 byte (1 Mbytes)
+> - Tegyük fel, hogy minden pixelen csak egy műveletet végzünk, ekkor 2^20 operációt kell végeznünk a képen. Ez kb. 10^-8 mp/művelet, ami hozzávetőlegesen 10 ms-ot igényel.
+> - Valós idejű képfeldolgozás esetén tipikusan 25-30 képet kell másodpercenként feldolgozni (fps).
+> - Tipikusan nem csak egyetlen műveletet kell pixelenként elvégezni, hanem több és összetettebb funkciókat.
+
+> #### Hisztogram
+> Azt adja meg, hogy az egyes intenzitásokból hány darab van a képen, azaz egy gyakoriságot ad meg.
+> 
+> ``` C
+> for(i = 0; i < height_max; x++)
+>     for(j = 0; j < width_max; y++)
+>         hist[p[i][j]] = hist[p[i][j]] + 1;
+> /*A pixeleket a p[][] tömb tárolja és a hist[k] vektor megmondja, hogy a k-ik intenzitásból hány darab van a képen*/        
+> ```
+> végighaladunk a képen minden egyes sorban megnézzük, hogy az adott intenzitás amit éppen kiolvasunk milyen értéket reprezentál és a hisztogramban az adott értken növeljük az elővordulások számát. Teháét ez egy egyszerű összegzés, könnyen párhuzamosítható.
+> 
+> **normalizálás:** elosztjuk az egyes képpontok gyakoriságát a képpontok számával.
+> 
+> **Halmozott hisztogram:** egy bizonyos intenzitásig hány darab annál nem nagyobb intenzitási érték jelenik meg a képen. A halmozás mindne szóbajövő intenzitásra elvégezhető. a nullás halmozás megegyezik a nullás hisztogram értékkel
+
+> #### Integrál kép
+> Összegzés, egy téglalap alakú részben adja meg az intenziátások összegét. Előnye, hogy gyorsan számolható. 
+> 
+> Minden x és y koordinátára összedjuk és megkapjuk a halmozott képet.
+> 
+> Legyen `i` a képpont intenzitása, `ii` az integrált kép
+> - `s` adott pozícióban oszlopösszeg amit korábbi számításból tudunk: `S(x , y) = s (x , y - 1) + i (x , y)`
+> - `ii (x , y) = ii (x - 1, y) + s (x , y)`
+> és `s (x,- 1) = 0`, `ii (- 1, y) = 0`
+> 
+> ![téglalap alakú részben az intenzitások](https://regi.tankonyvtar.hu/hu/tartalom/tamop412A/2011-0063_15_gepi_latas/images/03_07.png)
+> 
+> `D téglalap számítása: ii(4) – ii(3) – ii(2) + ii(1)`
+> 
+> Ezt az arc detektáláshoz érdemes használnni, neve Haar-szerű jellemzők: `Haar-szerű jellemzők: (Képpont intenzitások összege a fekete területen) - (Képpont intenzitások összege a fehér területen)` 
+> 
+> Hogyan? A maszkokat végigfuttatjuk a képen, és számoljuk a jellemzőket:
+> 
+> ![maszkok sázmítása](https://regi.tankonyvtar.hu/hu/tartalom/tamop412A/2011-0063_15_gepi_latas/images/03_08.png)
+> 
+> **Műveletígények:**
+> - Téglalap számítása: négy tömbhivatkozás
+> - Két téglalap: hat tömbhivatkozás
+> - Három téglalap: 8 tömbhivatkozás
+> - Négy téglalap: 9 tömbhivatkozás
+>
+> ![arcon hassználata](https://regi.tankonyvtar.hu/hu/tartalom/tamop412A/2011-0063_15_gepi_latas/images/03_11.png)
 
 
 # EA 2
