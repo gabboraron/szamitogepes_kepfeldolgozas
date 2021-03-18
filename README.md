@@ -575,4 +575,36 @@ Erre keresünk hatékony reprezentációt
 
 ![transzformációk](https://wiki.tum.de/download/attachments/23568255/Selection_525.png?version=1&modificationDate=1484306252867&api=v2)
 
+# EA 6
+## homogén koordinátás rendszer
+- hol az origó
+- hol az átvezető rész, hogyana alakul az átvezetés 
+
+## forgatás
+### elemi forgatás
+két értéke van: 
+- egy tengely körül (x,y,z)
+- a forgatás mértéke
+
+pl: *`x` tengely körül `g` szögben: 
+``` 
+            1   0     0    0
+            0 cos g -sin g 0
+rot(x,g) =  0 sin g  cos g 0
+            0   0     0    1
+```
+
+## transzformációk
+- 3D -> 2D
+- modellek kezelése
+- gépi látás: kamera egy koordináta rendszer, sík egy másik, 
+
+Ha van egy test amit le szerettnénk írni akkor vannak pontok amiket kezelünk, és az obketrum felületét adjjuk meg , pl háromszögekkel kifejezni az objektumot. Ígí a háromszög csúsából megmonható, hogy hol van, és akkor a háromszög csúcsából megmondható, hogy látjuk-e vagy sem az adott szögből.
+
+viszonylag jól tudunk dolgozni ha van `n` csúcs, ekkorr egy `4*n`es mátrixba tudkuk betenni. Ha mozgatjuk, megszorozzuk balról egy `4*4`-es mátrixal. Megindexeljük a csúcspontokat, `n` oszlopa van `n` csúcs esetén.
+objektum leíró mátrixot szorozzuk egy `4*4`mátrixal.
+
+![hough transzformáció](https://image2.slideserve.com/4449132/hough-transzform-ci1-l.jpg)
+
+
 
