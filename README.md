@@ -606,5 +606,7 @@ objektum leíró mátrixot szorozzuk egy `4*4`mátrixal.
 
 ![hough transzformáció](https://image2.slideserve.com/4449132/hough-transzform-ci1-l.jpg)
 
+# EA 7
+Hisztogram: Olyan grafikon ami minden lehetséges szürke árnyalathoz megadja a képen az adott árnyalatú pixelek számát.
 
 
