@@ -607,6 +607,216 @@ objektum leíró mátrixot szorozzuk egy `4*4`mátrixal.
 ![hough transzformáció](https://image2.slideserve.com/4449132/hough-transzform-ci1-l.jpg)
 
 # EA 7
-Hisztogram: Olyan grafikon ami minden lehetséges szürke árnyalathoz megadja a képen az adott árnyalatú pixelek számát.
+Képoperációk osztályozása  
+## Hisztogram: 
+> Olyan grafikon ami minden lehetséges szürke árnyalathoz megadja a képen az adott árnyalatú pixelek számát.
+> 
+> Ha normalizáljuk *(minden értéket elosztunk a kép méretével)*, akkor az egyes pixelértékek előfordulási valószínűségét kapjuk.
+
+**küszöbértékek meghatározása**
+- mindig zajszűrésszel érdemes kezdeni
+- lehet manuálisan megadni, ha pl jól elkülönül a háttér és a világítás.
+- adaptív eljárások melyek az inpput képhez automatikusan választják az optimális küszöbértéket
+  - lehet globális érték, medián mentén, vagy átlagolva, *isodata algoritmus*.
+  - ha egyenetlen az objetum akkor egy lokális módszer jobb lehet: *Niblack algoritmus*
+
+Több küszöb szerint is szétvághatunk, erős csúcsok, mély elválasztó völgyekkel segítenek.
+
+> Ha tudjuk, ohgy az objektum hányad részét foglalja el, tehát a tárgyhoz tartozó pontok a telejs képhez képest `p`-ed rész, akkro a tárgyhoz tartozó pontok aránya `1/p` Ehhez választunk egy `T` küszöb értéket: 
+> 
+> ![ped küszöb képlet](https://image2.slideserve.com/4548947/k-sz-b-l-s-p-ed-r-szn-l-l.jpg) | ![ped küszöb](https://image2.slideserve.com/4548947/k-sz-b-l-s-p-ed-r-szn-l1-l.jpg)
+> :-------------------------:|:-------------------------:
+
+**Hiszterézisses küsszöbölés:** ha nincs tiszta völgy a  hisztogramban akkor a háttérben sok olyan pixel van aminek az intenzitása megyezk az objektum pixeleinek intenzitásával és fordítva.
+- két küszöböt definiálunk a völgy két végén.
+- A nagyobb küszöb feletti pixelek objektumok, a kisebb alatti háttér
+- A két küszöb közötti akkor objektum, ha létezik objektumhoz tartozó szomszédos pixele
+
+### Isodata algoritmus - Yanni
+> Jól használható, ha az előtér és a háttér kb. ugyanannyi pixelből áll. Egy olyan iterációs technika ahol kezdetben kiindulunk egy értékből, amit szétbontunk az aktuálsi pillanatokban vett érték intenzitásokra, kiszámoljuk ezek átlagát, a két átlagban súlyozva határozzuk meg az értéket addig amíg nincs érdemi változás.
+> - **Inicializálás:** a hisztogramot két részre osztjuk (célszerűen a felezőponton): `T0`
+> - Kiszámítjuk az objektum, valamint a háttér intenzitásának középértékét: TO, TB (küszöbnél kisebb intenzitásúak, ill. nagyobbak átlaga) 
+> - **Az új küszöbérték a két középérték átlaga:** `Ti=(TO+TB)/2`
+> – **Vége**: ha a küszöbérték már nem változik: `Tk+1=Tk`
+
+### Otsu algoritmus
+> A bemeneti kép L szürkeárnyalatot tartalmaz
+> A normalizált hisztogram minden i szürkeértékhez megadja az előfordulás gyakoriságát (valószínűségét): pi
+> -  Az algoritmus lényege: keressük meg azt a `T` küszöbszámot, amely maximalizálja az objektumháttér közötti varianciát (szórás négyzetet).
+> - Homogén régiónak a varianciája kicsi
+> - Bimodális hisztogramot tételez fel
+>
+> A háttér súlya egy általunk nem ismert `T` küszöbig való összegzés, kiszámoljuk a háttér, az előtér és a középérték teljes érétkét amit megtehetünk az objektumra is. A középértékre nézett eltéréseket figylejük, ami a szórást adja meg.
+> ![otsu2](https://image2.slideserve.com/4548947/otsu-algoritmus-ii-l.jpg) | Ha ismerjük valamelyik középértéket a etljes képre, meg az objektumra, háttérre vonatkozóan, akkor akár ![otsu 3](https://image2.slideserve.com/4548947/otsu-algoritmus-iii-n.jpg)
+> :-------------------------:|:-------------------------:
+> Ezt a teljes képre is kisázmolhatjuk, ami felbontható 4 tagra, amiből 2 tag ami az osztályon belüli variancia ami a háttér szórásnégyzetét adja meg és a másik 2 tag az osztályok közötti érétket befolyásolja. Keressük azt a `T` küszöböt amire a második rész, az osztályok közötti szórásnégyzet lehet nagyobb. ![otsu 4](https://image2.slideserve.com/4548947/otsu-algoritmus-iv-n.jpg) | Ezt módosíthatjuk, ha az egyes osztáylok varianciáját számoljuk és azok miniumával megadhat az osztályok közötti variandia maximuma. Bizonyítható, ohgy ez monoton növekvő. ![otsu 5](https://image2.slideserve.com/4548947/otsu-algoritmus-v-n.jpg)
+> 
+
+## Lokálisan változó küszöbölés
+Ha nem a teljes képre hanem a képet felbontva részegységekre számoljuk ki a fenti módszereket akkor javíthatjuk a végeredményt. Előnyös ha a háttér nem homogén. Hátránya, hogy mivel az adott kis cellához mérünk mindent akkor igazából olyan helyeken ahol nincs jelentős változás a képen eltűnhetnek elemek, vagy épp ghost objektumok jelennek meg.
+
+![lokális küszöbölés eredménye](https://image2.slideserve.com/4548947/p-lda-adapt-v-k-sz-b-l-sre-n.jpg)
+
+### Dinamikus lokális küszöbölés
+![példa](https://image2.slideserve.com/4548947/dinamikus-lok-lis-k-sz-b-l-s-n.jpg)
+
+> #### Nibblack algoritmus
+> Egyetlen küszöb nem legendő az bojektum  és a háttér szétválasztásához. Változó küszöbérték `T(i,j)` kell, amely követi az intenzitásváltozást. 
+>
+> ![niblack](https://image2.slideserve.com/4548947/niblack-algoritmus-n.jpg)
+>
+> Posztptprocesszinget érdemes elvégezni a gradiens értékét figyelembe véve.
+
+
+## Szegmentálás
+Régió szegmentálás lehet egy háttérből kiemelés, vagy réteg reprezentációhoz, ahol külön rétegekre bontjuk a kép elemeit. Lehet a teljes képet egy fa szerű hierarchia rendszerbe is felbontani.
+
+**Hasonlósági feltételek**
+- A részkép minden pixele ugyanolyan intenzitású
+- Bármely részképben a pixelek intenzitása nem különbözik jobban egymástól, mint egy adott küszöb
+- Bármely részképben a pixelek intenzitása nem különbözik jobban a régió átlagos intenzitásától, mint egy adott küszöb
+- Bármely régióban az intenzitásértékek szórása kicsi
+
+**A szegmentálás sikeres ha**
+- a régiók homogének és egyenletesek (uniformitás),
+- a régiók belsejében nincsenek lyukak,
+- a szomszédos régiók között jelentős különbség van,
+- a szegmensek közötti határ egyszerű és pontos.
+- küszöböléses (lásd korábban is)
+- él-alapú
+- régió-alapú
+- illesztésen alapuló
+
+### Él-alapú szegmentálás
+https://regi.tankonyvtar.hu/hu/tartalom/tamop412A/2011-0063_15_gepi_latas/ch08.html
+
+- A hisztogram csak a szürkeségi értékek előfordulási gyakoriságát mutatja meg, a pozíciók, a szomszédos elemek szürkesége és egyéb információk hiányoznak.
+- Ahhoz, hogy zárt és összefüggő határvonalakat kaphassunk más módszerek szükségesek.
+- Előforduló problémák (pl. zaj esetén):
+  - álpozitív (false positive) élek — élt detektálunk ott, ahol nincs él;
+  - álnegatív (false negative) élek — nem találunk élt, pedig van
+
+> 1. kép símitás
+> 2. él korrekciós módszer laklamazása
+> 3. élek kapcsolása, csoportosítása
+
+#### Él korrekciós módszerek
+**Él relaxáció**
+- egy él akár erős is ha nincs folytatása a környezetében valószínűleg nem tartozik semilyen határshoz
+- egy gyenge él, ha két erős él között van, valószínűleg a határvonalhoz tartozik
+
+**Él kapcsolás**
+- Összekapcsolhatunk szomszédos él-pontokat, ha hasonló tulajdonságaik vannak:
+  - Hasonló a gradiensük nagysága valamely küszöbértékre
+  - Hasonló gradiensük iránya valamely küszöbértékre
+
+### Régió alapú szegmentálás
+- az objektum/szegmens által elfoglalt területet határozza meg.
+- Megközelítések:
+  - régió növelés *(region growing)*
+  - egyesítés *(merge)*
+  - szétválasztás *(split)*
+  - egyesítés és szétválasztás *(split & merge)*
+  - fagocita algoritmus
+
+> **Seed segmentation lépései:**
+> - Számítsuk ki a kép hisztogramját
+> - Simítsuk a hisztogramot átlagolással vagy Gauss szűréssel (kis csúcsok, zajok eltüntetése)
+> - Detektáljunk “jó” csúcsokat (peakiness) és völgyeket – lokális maximumok és minimumok keresése-, peakiness test
+> - Szegmentáljuk a képet bináris képpé a völgyben lévő küszöbökkel (rendeljünk 1-t a régiókhoz, 0 a háttér)
+>  - Alkalmazzuk a kapcsolódó komponensek algoritmusát (connected component algorithm) minden bináris képrészre, hogy megtaláljuk az összefüggő régióka
+
+![képletek](https://player.slideplayer.hu/8/2131428/data/images/img35.jpg)          | ![hisztogram működése](https://slideplayer.hu/slide/2131428/8/images/27/Hisztogram+alap%C3%BA+szegment%C3%A1l%C3%A1s.jpg) https://www.inf.u-szeged.hu/~gnemeth/kurzusok/kepfel1/matlab_resz/12_gyakorlat.pdf
+:-------------------------:|:-------------------------:
+![connected components](https://slideplayer.hu/slide/2131428/8/images/28/Connected+Components+A+nem+csatlakoz%C3%B3%2C+ugyanolyan+szegmens%C5%B1+r%C3%A9szeket+sz%C3%A9t+kell+v%C3%A1gni..jpg) | **Rekurzív kapcsolódó komponens módszer - Connected Component Algorithm** - Dolgozzuk fel a bináris képet balról jobbra, fentről lefelé  -  Ha még nem címkézett `1`-t tartalmazó pixelhez érkezünk, akkor rendeljünk egy új címkét hozzá  -  Rekurzívan vizsgáljuk meg a szomszédait a `2.` lépésnek megfelelően, és rendeljük hozzá ugyanazt a címkét, ha még nem címkézettek és az értékük `1`  -  Álljunk meg, ha minden `1` értékű pixelt megvizsgáltunk - *Megjegyzés: 4-es, 8-as szomszédság*
+
+## Soros kapcsolódó komponens módszer
+1. Dolgozzuk fel a bináris képet balról jobbra, fentről lefelé
+2. Ha még nem címkézett “1”-t tartalmazó pixelhez érkezünk, akkor rendeljünk hozzá egy új címkét a következő szabályok szerint:
+```
+  0      0      0       0
+0 1  ->  0 L    L1 -> L L
+
+  L      L      L       L
+0 1  ->  0 L    M1  ->  M L       (L=M)
+```
+3. Határozzuk meg a címkék közül az ekvivalenseket (pl.: a=b=e=g és c=f=h, és i=j)
+4. Az ekvivalens csoportok minden eleméhez rendeljük ugyanazt a címkét második körben
+
+
+![algoritmus két lépésben](https://slideplayer.hu/slide/2131428/8/images/31/Soros+kapcsol%C3%B3d%C3%B3+komponens+m%C3%B3dszer.jpg) | ![8 szomszédság szabályok](https://slideplayer.hu/slide/2131428/8/images/32/8+szomsz%C3%A9ds%C3%A1gra+szab%C3%A1lyok.jpg) |
+:--------------------------------:|:------------------------------:
+![ujjas pl](https://slideplayer.hu/slide/2131428/8/images/33/P%C3%A9lda+%E2%80%93+feh%C3%A9rrel+jel%C3%B6lt+ujjhegyek.jpg) | ![szegmentalas pl](https://slideplayer.hu/slide/2131428/8/images/34/P%C3%A9lda+szegment%C3%A1l%C3%A1sra+93+cs%C3%BAcs.jpg) |
+![szegmentalas pl2](https://slideplayer.hu/slide/2131428/8/images/36/P%C3%A9lda+szegment%C3%A1l%C3%A1sra+%280%2C+40%29+%2840%2C+116%29+%28116%2C+243%29+%28243%2C+255%29.jpg) | ![szegmentalas pl hisztogram](https://slideplayer.hu/slide/2131428/8/images/35/P%C3%A9lda+szegment%C3%A1l%C3%A1sra+Sim%C3%ADtott+histogram+%28%C3%A1tlagol%C3%A1s+5+m%C3%A9ret%C5%B1+maszkkal%29.jpg) |
+
+**továbbfejlesztése**
+- A kis régiókat kapcsoljuk nagyobbakhoz
+  – Régió növelés
+- Nagy régiók szétvágása
+  – Régió vágás
+- Gyenge határok eltüntetése szomszédos régiók esetében
+
+### Régió növelés
+- Régió vágás és egyesítés *(split and merge)*
+- *Fagocita (phagocyte)* algoritmus
+- Valószínűségi arány teszt
+
+#### Split and Merge régiókra
+> Split and merge esetén nem biztos hogy ugynaazt kapjuk mindkét irányból iindulva.
+
+Vágás: vágjuk a nem homogén régiókat 4 szomszédos részre
+- Egyesítés: hasonló tulajdonságú (uniform) szomszédos régiókat kapcsoljuk össze
+- Álljunk meg, ha már nem lehet sem vágni, sem ragasztani
+- Az uniformitás/hasonlóság függvénye: `P`
+
+![split and merge pl](https://slideplayer.hu/slide/2131428/8/images/40/P%C3%A9lda+%E2%80%93+split+and+merge+R+R1+R2+R3+R4+R1+R2+R.jpg) | ![split nad merge pl matrix](https://slideplayer.hu/slide/2131428/8/images/41/P%C3%A9lda+%E2%80%93+split+and+merge+R+R+R+R+R+R+R+R+R+R+R+R+R+R+R+R+R+R+R+R+R+R+R.jpg) |
+:---------------------------:|:-----------------------:
+
+### Quad Tree
+> Négyes fa adatstruktúra régióreprezentáláshoz
+> - Három fajta csomópont: szürke, fekete és fehér
+> -  Elsőként generáljunk egy piramist:
+> -  Ha a piramis fehér, vagy fekete, akkor visszatérés, egyébként:
+>    – Rekurzívan keressünk egy quad tree-t X1 negyedben
+>    – Rekurzívan keressünk egy quad tree-t X2 negyedben
+>    – Rekurzívan keressünk egy quad tree-t X3 negyedben
+>    – Rekurzívan keressünk egy quad tree-t X4 negyedben
+>    – Return
+
+![quad treee](https://images.slideplayer.hu/8/2131428/slides/slide_43.jpg)
+
+### Faocita algoritmus
+> határ összeolvastásaára jó, a gynege határokat szüntetik meg az élősködők, í]y nem a régiókra koncnetrálunk, csak a közös területre.
+> 
+> Olyan értékeket keresünk ami ka határ erősségét vagy gyengeségét reprezentálják. Kiveszünk intenzitást a régióból, nem tetszőleges két poontot, hanem a határ mentén levő közös pixelpárokat vizsgáljuk. Ha ezek egy küszöbnél jobban nem térnek el akkor ezt a párkapcsolatot megjelöljük egynullával, egyessel ha nagyobb. Megsázmoljuk hogy poáronként háyn ilyent találtunk összesen.
+> - összeolvasztjuk a két régiót ha egy küszöbnél kisebb az előbb kapott összeg
+> - összeolvasztjuk a két régiót ha akapott összeg és a határon levő összes pont számának hányadosa nagyobb mint egy küszöbérték.
+
+### Valószínűségi arány teszt
+> A kérdés ugyanaz: összeragasztható-e a két régió. Az egyik régió `R1` a másik `R2`, és ehhez számolunk szórást és intenzitás eloszlást. Ehhez megnézzük, hogy a másik régióban vett elemek intenzitása milyen valószínűségben vannak. A két régiós hipotézist és az egy régiós hipotézist is kiszámoljuk, és megkapjuk, ohgy melyik teljesül, azzal, hogy kiszámopljuk a hányadosukat.
+> ![alapfelállás](https://slideplayer.hu/slide/2131428/8/images/48/Val%C3%B3sz%C3%ADn%C5%B1s%C3%A9gi+ar%C3%A1ny+teszt.jpg)          | ![](https://slideplayer.hu/slide/2131428/8/images/49/Val%C3%B3sz%C3%ADn%C5%B1s%C3%A9gi+ar%C3%A1ny+teszt.jpg)
+> :-------------------------:|:-------------------------:
+> ![hipotézisek](https://slideplayer.hu/slide/2131428/8/images/50/Val%C3%B3sz%C3%ADn%C5%B1s%C3%A9gi+ar%C3%A1ny+teszt.jpg) | ![képletek](https://slideplayer.hu/slide/2131428/8/images/51/Val%C3%B3sz%C3%ADn%C5%B1s%C3%A9gi+ar%C3%A1ny+teszt.jpg)
+>
+> Ezt kiegészíthetjük egy **Régió szomszédsági gráf**-al:
+> - Régiók reprezentálására jól használható adatstruktúra
+> - A régiók csomópontok a gráfban
+> - Az élek a régiók szomszédságát reprezentálják
+> - A gráfban kell csak a csomópontokat „adminisztrálni”: azonosság jelzése; majd eltávolítás
+
+### Régió szegmentálás és éldetektálás összehasonlítása
+- Zárt határ
+  – Éldetektálás esetében általában nem
+  – Régiószegmentálás zárt határokat produkál
+- Lokális < > globális
+  – Éldetektálás lokális művelet
+  – Régiószegmentálás globális
+- Jellemző vektorok tulajdonságainak növekedése
+  – Általában nem javítja az éldetektálás hatékonyságát nagy mértékben
+  – Javítja a szegmentálás hatékonyságát (mozgás, textúra, stb.)
+- Határpontok
+  – Pontos helyzet meghatározás az éldetektálás során
+  – Általában nincs ilyen
+
 
 
