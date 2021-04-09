@@ -1,6 +1,8 @@
 - [Digitális tankönyvtár: A gépi látás és képfeldolgozás párhuzamos modelljei és algoritmusai](https://regi.tankonyvtar.hu/hu/tartalom/tamop412A/2011-0063_15_gepi_latas/ch02.html)
 - [Kató Zoltán - Digitális képfeldolgozás](http://www.inf.u-szeged.hu/~kato/teaching/DigitalisKepfeldolgozasTG/)
+  - [Digitális képfeldolgozás gyakorlat](http://www.inf.u-szeged.hu/~tanacs/pyocv/index.html)
 - [R.C. Gonzales, R.E. Woods: Digital Image Processing](https://github.com/gabboraron/szamitogepes_kepfeldolgozas/blob/main/Digital%20Image%20Processing%203rd%20ed.%20-%20R.%20Gonzalez%2C%20R.%20Woods-ilovepdf-compressed.pdf)
+
 
 # Számítógépes képfeldolgozás
 
@@ -190,6 +192,7 @@ https://regi.tankonyvtar.hu/hu/tartalom/tamop412A/2011-0063_15_gepi_latas/ch02s0
 
 # EA 2
 ### hisztogram kiegynelítés
+http://www.inf.u-szeged.hu/~tanacs/pyocv/hisztogram_kiegyenlts.html
 - minden egyes képnek elkészítjük a hisztogramját
 - kiszámoljuk minden pixelre a relatív értéket, majd 
 
