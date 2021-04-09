@@ -13,7 +13,7 @@
   - kis photoshop: *fontos az algoritmusok gyorsítása!*
     - Negálás *
     - Gamma transzformáció
-    - Logaritmikus transzformáció
+    - [Logaritmikus transzformáció](https://www.tutorialspoint.com/dip/gray_level_transformations.htm)
     - Szürkítés *
     - Hisztogram készítés
     - Hisztogram kiegyenlítés
