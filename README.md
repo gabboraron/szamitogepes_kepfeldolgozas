@@ -1,4 +1,6 @@
-[Digitális tankönyvtár: A gépi látás és képfeldolgozás párhuzamos modelljei és algoritmusai](https://regi.tankonyvtar.hu/hu/tartalom/tamop412A/2011-0063_15_gepi_latas/ch02.html)
+- [Digitális tankönyvtár: A gépi látás és képfeldolgozás párhuzamos modelljei és algoritmusai](https://regi.tankonyvtar.hu/hu/tartalom/tamop412A/2011-0063_15_gepi_latas/ch02.html)
+- [Kató Zoltán - Digitális képfeldolgozás](http://www.inf.u-szeged.hu/~kato/teaching/DigitalisKepfeldolgozasTG/)
+- [R.C. Gonzales, R.E. Woods: Digital Image Processing](https://github.com/gabboraron/szamitogepes_kepfeldolgozas/blob/main/Digital%20Image%20Processing%203rd%20ed.%20-%20R.%20Gonzalez%2C%20R.%20Woods-ilovepdf-compressed.pdf)
 
 # Számítógépes képfeldolgozás
 
@@ -817,6 +819,89 @@ Vágás: vágjuk a nem homogén régiókat 4 szomszédos részre
 - Határpontok
   – Pontos helyzet meghatározás az éldetektálás során
   – Általában nincs ilyen
+
+# EA8 - Invariáns leírók
+**Leírási módok:**
+- régió határaihz kapcsolódó jellemzőkkel, ha a régió alakján van a hangsúly
+- régió belső jellemzőivel (textúra, szín, stb)
+
+## Külső leírók:
+- http://www.inf.u-szeged.hu/~kato/teaching/DigitalisKepfeldolgozasTG/11-ShapeDescriptors.pdf
+### Lánckód
+Körbejárjuk az objektum határát amíg körbe nem érünk, az egyes lépések irányait kódoljuk.
+- Iránykódot rendelünk minden pixelpárhoz
+- kövessük a htárt az óramutató járásának irányában.
+- ha zaj megjelenik a kpen akkor az az objektumok határán is megjelnik.
+Valamennyire invariáns a lánckód, de nem teljes mértékben. Nem jó a forgatás, ha relatív irányban gondolkodunk. A lánckód nagyon hosszú lehet. Gyakorlatban nem túl hatékony megoldások, poligonokkal való közelítés jobb lehet.
+
+**Differenciált lánckód:** Tekintsük körkörös sorozatnak a lánckódot és számoljuk ki a differenciákat két egymás utáni elemre vonatkozóan.
+
+**Alakszám:** a differenciák körkörös sorozatában a legkisebb egész szám.
+- `n`-ed rendű alakok: n elemű lánckóóddal elírható zárt alakok lehetséges fomái
+*pl:*
+```
+lánckód 003221
+```
+### Módosított alakszám
+1. rögzítsük az alakszám rendjét.
+2. határozzuk meg a fő és melléktengelyt és azok irányát
+3. határozzuk meg a minimális befogadó téglalapot melynek alakszám rendje = `n` és oldalainak aránya = excentricitás
+4. számoljuk ki az alakszámot ebben a rácsban.
+
+### Szignatúra
+- határon haladva az ót függvényében az érintő iránya egy refeernciához képest
+- meredekség sűrűség függvény: érintőfüggvény hisztogramja
+- az egyenes szegmensek csúcsok lesznek a hisztogramban
+
+*Mi a négyzet szigantúráában az átfogó értéke a szög függvénéyben? Milyen szigaantúrák vannak? Mi az alakszám rendje?*
+
+### Fourier leírók
+- Adott N pontból álló rendezett határ: (x0,y0),(x1,y1)...(xY-1,yN-1)
+- minden koordinátát kezeljünk komplexként `s(k) = xk+j*yk`
+- `a(u) = 1/N*sum(s(k)exp(-j2PIuk/N))`
+  -  `u : 0..n-1`
+  -  `a` komplex értékek
+Ha `N` lemeből áll a kontúrsorozat akor a furier leírók sázma is `N`. Elhagyjuk a magas fekvenciás tagokat, amik a kis változásokat jelentik, az alacsony frekvenciák a durva görbületeket határozzák meg.
+
+### Régió tulajdonságok
+#### Terület
+> pixelek száma a régióban
+> 
+##### Tömegközéppont/súlypont
+> Képek értékét osztjukk a területtel
+
+##### Nyomatékok, momentumok, inerciák
+> centrálásra, forgatásra invariánsok:
+> 
+> ![hu nyomaték](https://images.slideplayer.hu/46/11724524/slides/slide_32.jpg)
+
+#### Kerület
+> A régió határán lévő pixelek száma. Megj: néha másképpen értelmezik: 1 és gyök2 távolságok összege.
+
+#### kompaktság
+> `elem kerülete`/`4*PI*terület` => kör kompaktásga = `1`
+
+#### orientáció
+> A nyomatéki főtengelyt, vagy inercia tengelyt adja meg. 
+> 
+> Az egyenestől vett távolságokat kezeli. Azo ka tengelyek melyek sézlsőérétkei, minimumai az értáknek azok az inercia negelyek.
+> 
+> A főtengelyre merőlegeseket mérünk fel és azok távolságát nézzük a koordináta tengelyektől.
+
+- nyomatéki főtengelyek aránya
+- topolgiai leírók
+- textúra
+
+# Optikai folyamatok alkalmazása
+
+
+
+
+
+
+
+
+
 
 
 
