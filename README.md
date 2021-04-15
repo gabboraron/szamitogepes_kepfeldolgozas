@@ -896,8 +896,74 @@ Ha `N` lemeből áll a kontúrsorozat akor a furier leírók sázma is `N`. Elha
 - textúra
 
 # Optikai folyamatok alkalmazása
+-
+
+# EA9 - Arcfelismerés - detektálás és authentikáció
+## AdaBoost
+> Képpont intenzitások összege a kép egy részén (fekete) - Képpont intenzitások összege a kép egy másik részén (fehér)
+> ````
+> ****
+> ****
+> ****
+>     ****
+>     ****
+>     ****
+> ````
+> 
+> Sorösszegeket veszünk mindegyik *sötét* és *világos* részhez, így kapjuk az **integrál kép**et. Ezeket több méretben futtatjuk a képen, hogy különböző méretű arcokat is megtaláljon.
+> 
+> **kaszkádba szervezés**: jellemző detektorok hierarchiába szervezése, ha a nagyobb méretű azt jelzi, hogy nem illeszkedik értelmetlen a pontosításokat tesztelni, hiszen úgysem arc.
+ 
+*pl:*
+
+*Gazdag ember (RP) szakértőkből 50 fős csapatot akar összeállíani. Ehhez az elmúlt öt évre 10000 szakértő teljesítményét nézi. => 1000 nap mert minden évben 200 napig vna nyitva a tőzsde. Megkérdezte a szakértőket, hogy adott nap *x* ponttal nőni vagy csökkeni fog-e az árfolyam. Tehát igen/nem típusú értékeink vannak.*
+
+- *Első helszre nyilván azt választjuk a ki legtöbb helyes választ adja.*
+- *Scharpire ötlete alapján a második kiválaszott szakember az aki az első hibázási alkalmainál a legtöbb helyes választ adja. És így  a 3., stb elyre is. Ők a gyenge szakértők, akik elég jól kiegésítik egymást.*
+
+*Így olyan csapatot tudunk összeállítani, amivel az össz értéke, össz helyes válaszok aránya magas lesz. **FONTOS:** aki pont 50%-on áll az nem alkalmazható, mert semmilyen komplementer halmlazoz nem ilelszhető jól!* 
+
+*Ezek után beállítjuk, hogy melyik szakértő véleményét hány százalékban vesszük figyelembe, ezek a súlyok. Ez a helyes válaszok számától függ mondjuk.*
+
+> ### Tréning fázis
+> Sok képen próbáljuk ezt a fekete-fehér abalkozást. Az ablakok a *szakértők*. Ezt kipróbáljuk arcokon és nem arcok is! A *szakértők* válaszait tároljuk, hogy megmondhassuk melyik *szakértő* mennyire *számít*.
+> 
+> Minden képre kapunk egy-egy valséget minden *szakértőtől*, hogy az arc-e vagy sem. DE minden *szakértő*ről tudjuk, hogy mennyire megbízható a véleméyne, ez az ő súlya. A szkaértők összsúlya `1` Ezek alapján megmondhatjuk, mennyire számít a véleménye az adott képpel kapcsolatban. A képeknek egy saját súlya keletkezik minden szakértőtől. Ha arc akkor nő a súlya. A folyamat végére megmondhatjuk, hogy a súlyok szerint mely képek arcok. 
+> 
+> ![adaboost](https://www.researchgate.net/profile/Zhuo-Wang-36/publication/288699540/figure/fig9/AS:668373486686246@1536364065786/Illustration-of-AdaBoost-algorithm-for-creating-a-strong-classifier-based-on-multiple.png)
+
+## SVM
+> Gradiens értékeket számolunk, és az alapján vesszük az irányvvektorok irányát, szögét
+> 
+> A mélytanulási hálók kiszorították ezt a technológiát.
+> 
+
+## biometrikus azonosítás
+- Ismeret alapú megközleítés: vízszintes és függőleges hisztogrammok, de ez csak egy emberre jó!
+- Éldetektálással is lehet, ha az éleekből ellipszis alakú vonalakat keresünk.
+- Hasonlóan lehet különböző jellemző, vonalakat detektálni
+
+**Megjeleneés alaú módszerek:**
+- szín alapú mdszerek: YCrCb módszerel meg
+- Holisztikus módszer: saját arcok
+  -  pár emberről készítűnk képet amiből képezünk egy átlag arcot
+- Gábor wavelet. eltárolunk bizonyos részeket a képeken, és sikeresen detektál a képen jellemző pontokat, ezek nem féltetlen azok a pontok amit emberek is megadnának jellemző pontnak.
+
+Morphing: egyik arc egy másik arcác alakul át, és a köztes lééseket generáljuk le.
+
+3D fejmodell animálás
+
+## ZH-ról
+- 20-25 perc egymondatos válaszok
+- a maradék egy feladat a félév közben vett feladatokhoz hasonlóan.
 
 
+
+
+
+
+
+ 
 
 
 
