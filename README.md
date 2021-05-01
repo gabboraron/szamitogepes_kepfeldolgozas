@@ -191,6 +191,8 @@ https://regi.tankonyvtar.hu/hu/tartalom/tamop412A/2011-0063_15_gepi_latas/ch02s0
 
 
 # EA 2
+> Előfeldolgozási lépések, van egy bemeneti képünk és abból szeretnénk valamilyen szmepontból jobb képet. Ez történhet képtérben, pontműveletekkel, ha a koordinátán kiolvassuk azi ntnezitást, megváltoztatjuk és ugyanoda visszaírjuk. Halmozott relatív gyakoriságokat sázmolunk egy adott határig, és az alapján módosítjuk a képet.
+
 ### hisztogram kiegynelítés
 http://www.inf.u-szeged.hu/~tanacs/pyocv/hisztogram_kiegyenlts.html
 - minden egyes képnek elkészítjük a hisztogramját
@@ -314,22 +316,80 @@ for(int y=0;y<b.Height;++y)
 - simítás
 
 # EA 3
+
+## Bionoiális eloszlás
+**Gauss szűrő**: `1/16*[[1 2 1][2 4 2][1 2 1]]`. A **binomiális eloszlás** is közelít a normális eolszláshoz, tehát közleít a Gauss szűrő értékeéhez.
+
 ## Nem lineáris szűrők, medián szűrő
+> sorbarendező szűrő, a medián eltűnteti a pixeles zajokat.
+> 
+> Egy környezetből (3x3,5x5), kiolvassuk az értékeket, 
+> 
+> példa [kód](https://en.wikipedia.org/wiki/Median_filter#Two-dimensional_median_filter_pseudo_code):
+> ```C#
+> 1. allocate outputPixelValue[image width][image height]
+> 2. allocate window[window width × window height]
+> 3. edgex := (window width / 2) rounded down
+> 4. edgey := (window height / 2) rounded down
+>    for x from edgex to image width - edgex do
+>    for y from edgey to image height - edgey do
+>        i = 0
+>        for fx from 0 to window width do
+>            for fy from 0 to window height do
+>                window[i] := inputPixelValue[x + fx - edgex][y + fy - edgey]
+>                i := i + 1
+>        sort entries in window[]
+>        outputPixelValue[x][y] := window[window width * window height / 2]
+> ```
+> Párhuzmaosíthatunk, ha mindig a vertikális és a horizontálsi irányban összehasonlítjuk és felcseréljük egymás között a műveleteket.
+> 
+> A sarkokat a (3x3)-as levágja! a 9x9-es nem!
+> 
+> ![medián szűrő végeredmény, példa](https://upload.wikimedia.org/wikipedia/commons/1/1d/Medianfilterp.png)
+> 
+
 - impulus szerű zajokat eltávolíŧ
 - nem szélesíti ki az éleket
 - nem mindig hatékony
  
-## élesítés
-> élesítéshz térbeli deriváltakat használunk -> gradiens két irányból
+## Élesítés
+A maszklunkban negatív és pozitív érétkek is lesznek, mivel az a cél, hogy a homogén területen 0 érétket kapjunk máshól attól eltérőt, így növeljük a kontraszt értéket.
+
+Ehhez gradienst használunk:
+
+![gradiens defííció - élesítés deriváltak használatával](https://slideplayer.hu/slide/2131399/8/images/54/%C3%89les%C3%ADt%C3%A9s+deriv%C3%A1ltak+haszn%C3%A1lat%C3%A1val.jpg)
+
+A gyakorlatban ez azt  jelenti, hogy első deriváltat úgy kapjuk, hogy a kelsorozatból két érték különbségét vesszük, másod deriváltnak a kapott különbésgeket számoljuk tovább újabb különbséget kapva. 
+
+![első és másodrendű differenciók példa](https://slideplayer.hu/slide/2131399/8/images/56/Els%C5%91+%C3%A9s+m%C3%A1sodrend%C5%B1+differenci%C3%A1k.jpg)
+
+A fenti példából kiindulva a konstans szakszon az előtte kapott differneciákat kapjuk. Így lesz a `3.` helyen `-1` miután `5-6 = -1`. Tehát a derivált után, ez azt jelenti, hogy a minden változás kicsit normalizáltabb lesz, és a második derivált értéke ha *pozitív* értékből *negatívba* (vagy fordítva) ment akkor nagy változás volt a képen.
+
+> élesítéshez térbeli deriváltakat használunk -> gradiens két irányból ->másodrendű differenciáltak
 > - számoljuk ki x és rá merőleges y irányban a derivált értékét
 > - a két értékből sázmítsunk vektor eredőt, és annak az irányát és nagyságát is határozzuk meg.
-> 
+ 
+
 > ### Laplace szűrő
 > `x` irányú derivált és `y` irányú drivált összege
 > 
+> A lehetséges maszkjaink:
+> ```
+> 0  1  0    1  1  1
+> 1 -4  1    1 -8  1
+> 0  1  0    1  1  1 
+> 
+> 0 -1  0   -1 -1 -1
+> -1 4 -1   -1  8 -1
+> 0 -1  0   -1 -1 -1
+> ```
+> *Ez 4 különböző maszk, az első és az laatta levő ugynaolyan, a bal felső és alatta levő a küönböző irányokat is figyelembe veszi.*
+> 
+> tehát: `diff2(f)=f(x+1,y)+f(x-1,y)+f(x,y+1)+f(x,y-1)-4*f(x,y)`
+
  
-## él detektálás
-> sarok pont/jellemző pont detektálás
+## Él detektálás
+> Alapflevetés: hol van nagy változás a képen. Ez objektumok határait/vaonalait jól leírja.
 
 - ha éleket akarunk detektálni előbb használjunk zajszűrést
 - élkiemelés
@@ -343,7 +403,8 @@ manhattan távolság: abszolút értékben a két irány nagyságának összege
 ### Prewitt operátor
 - átlagolás egyik irányban
 - a maszk elemek összértéke nulla
-
+- kevésbé zaj érzékeny
+felbontható két külön mezőre, egy függőleges és egy vízszintes irányban, ekkor külön-külön elvégezhetjük a vízszintes és függőleges detektálást és ekkor megkapjuk a végeredményt ha összetesszük a két külön képet.
 
 ### Canny éldetektor 
 - élkiemelés
@@ -361,6 +422,7 @@ ideális éldetektálás:
 6. hysteresises küszöbölés
 
 # EA 4
+
 
 # EA 5 - vonalak detektálása
 > előzetesen feltételezzük, hogy éldetektálást végzünk, és vannak különálló pixeleink amiket meghatároztunk
