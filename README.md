@@ -421,7 +421,59 @@ ideális éldetektálás:
 5. összeköttjük az élpontokat láncolt listákban
 6. hysteresises küszöbölés
 
-# EA 4
+# EA 4 - Élek, sarokpontok, speciális szakaszok 
+1. zajszűrés
+2. deriváltakhoz tartozó operátorokkal dolgozunk, vagy differenciáló oerátorokat.
+   Két irányú operátort használunk, egy a vízszintes, egy a függőleges irányban, ez a gradiensvektor.   
+
+## Éldetektor
+Éldetektornál elég egy 3x3-as operátor, ilyen Prewitt operátor is, egyik iránban simít másik irányban "detektál"
+```
+-1 -1 -1    -1  0  1
+ 0  0  0    -1  0  1
+ 1  1  1    -1  0  1
+```
+Kis méretű maszkok esetében **nem** javasolt a kettős ciklus használata amin belül egy maszkoló függvényt használjunk, inkább, elég a pixel érétkeket megfelelő előjellel összegezni, sőt, a gradinest is számolhatjuk: `grad(f) = |(x2-x0)+(x5-x3)+(x8-x6)|+|(x6-x0)+(x7-x1)+(x8-x2)|`.
+
+### LOG operátor
+A változásokat értékeljük ki, hogy hol van ellentétes irányú átmenet.
+
+### DOG operátor
+A bnormális eloszlások különbségét veszi figylemebe, tehát a gaussok differenciáljának különbséégét nézi.
+
+### Minta összehaasonlítása képrészlettel
+Fogoma mintát és ráillesztem a képrészletre, amennyiben az egmyásnak megfeleltethető pozícióban levő pixelek értékeit kivonuk egymásból úgy megkapjuk ak öztük levő különbséget. Ha fogjuk a minta és a kép intenzitásának különbségének abszolút értékét és képezzük minden képpontra akkor vesszük azok minimumát. 
+
+> ## Jellemző pont detektálás
+> Kép illesztés/párosítás szempontjából ki lehet választani, valamilyen szmepontból jellemző pontjait a képnek. Ez jó lehet pl ugyanarról a dologról készült képek összeillesztéséhez. Olyan pontokat veszünk figyelembe, amik geometriai transzformációkra invariánsak, így szeretnénk olyan jellemzőpontokat amikkel. A jellemzőpont mellé valamilyen tulajdonságot is illeszthetünk, ekkor jellemző detektorokat készítünk. 
+>
+> Irodalom: [Brown: Multi-Image Matching using Multi-Scale Oriented Patches](http://matthewalunbrown.com/papers/cvpr05.pdf)
+>
+> - fontos, hogy gyorsan sázmíthatóak legyenek
+> - elég pontos válaszokat adjanak
+> - ne legyen túl sok
+> - a térbeli elhelyezkedést tudjuk figyelembe venni
+> 
+> Definiálunk egy ablakot amit "tologatunk" a képen, ha nincs semmi akkor az egy homogén terület, ha egy élen vagyunk és az él mentén mozgunk akkor ugyanolyan az eredeti éa az elmozdított akkor nincs eltérés, ellenben ha ellentétes irányban mozgatjuk akkor lesz változás, ha sarok fölött játszuk ezt el akkor minden irányba való mozdíásánál lesz változás, tehát, ha veszünk egy ablakot és mozgatjuk egy képrészlet fölött és minden irányban lesz változás akkor megkaptuk a sarokppontunkat. Ugyanakkor ez nagyon sok számítást ígényel.
+> 
+> E helyett ha tudunk egy speciálist irányt keresni amelyhez képest minden iráynba a változás értéke nagyobb akkor az egy sarokpont lehet. 
+> 
+> Ha `u` és `v` a két irány amiben tologatjuk az abalkaot akkor az `elmozdított - eredeti` négyzetének összegét határozzuk meg: `E(u,v) = SUM(I(x+u,y+v) - I(x,y))^2`. Keressük azt az `u`, `v` értéket amiree elég nagy a hibaérték. Az összegzés belső részét Taylor sorba fejtjük, hogy könyebben kezelhető legyen. Az `u,v` értékek picik. Ezt egy Hesse féle mátrixnak nevezhetjük. A mátrixhoz rendelhető kisebbik sajátérték az a legkisebb változás mértékét adja meg, a kisebbik sajátvektor a változás irányát. A nagyobbik a legnagyobb változás irányát és értékét. 
+> 
+> 1. kiszámítjuk a hibaértéket tetszőleges elmozdulással, nem midnen lehetséges `u,v`-re, hanem a `lambdaa-sajátérték` egyjellemzőpont lehet.
+> 2. a kép mindne pontjában kiszámoljuk az Ix, Iy értéket, és a H mátrix, sázmunkra fontos argumentumait.
+> 3. megkapjuk az egyenlet megoldását, és a kisebbik érétknél megjelöljük a pontot, és leheetőleg ezekből a legnagyobbat tartjuk meg.
+> 
+
+### Harris operátor
+A két sajátértékből kaphatjuk: `f = (lambda1*lambda2)/(det(H)*mátrixnomya(H))`ahol a `mátrixnomya(H) = h11+h12`. 
+
+## Sarokpont detektálás - Morovec operátor
+4x4-es képrészleteket veszünk ki a képből, és vesszük a vízszintes, függőleges, és két átlós éréték minimumát, és kiszámoljuk az ablakokra külön-külön a varianciát, azaz a szórásnégyzeét. Ekkor ha egy 12x12-es tartoányt használunk láthatjuk, hogy hol van az adot területre eső sarokpont. 
+
+## Sarokpont detektálás - Kanade - Lucas - Tomasi algoritmusa
+A mátrix deredmináns érétéékéhez hozzáadjuk a főátlók összegét, és összehasonljtjuk egy treshold értékel. 
+
 
 
 # EA 5 - vonalak detektálása
