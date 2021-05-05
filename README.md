@@ -946,6 +946,7 @@ Vágás: vágjuk a nem homogén régiókat 4 szomszédos részre
 - http://www.inf.u-szeged.hu/~kato/teaching/DigitalisKepfeldolgozasTG/11-ShapeDescriptors.pdf
 ### Lánckód
 > bőveben: https://regi.tankonyvtar.hu/hu/tartalom/tamop412A/2011-0063_15_gepi_latas/ch09.html
+
 Körbejárjuk az objektum határát amíg körbe nem érünk, az egyes lépések irányait kódoljuk.
 - Iránykódot rendelünk minden pixelpárhoz
 - kövessük a htárt az óramutató járásának irányában.
@@ -1089,7 +1090,61 @@ Morphing: egyik arc egy másik arcác alakul át, és a köztes lééseket gener
 - 20-25 perc egymondatos válaszok
 - a maradék egy feladat a félév közben vett feladatokhoz hasonlóan.
 
+## Gyakorlás ZH-ra
+### 1. Sobel, hisztogram, medián szűrő
+> [/elek_sarok_sobel/](https://github.com/gabboraron/szamitogepes_kepfeldolgozas/tree/main/elek_sarok_sobel)
+> 
+> 1.	Az alábbi kép nyolc lehetséges szürkeárnyalatos intenzitással rendelkezik. Rajzolja le a kép hisztogramját! Hajtson végre a képen hisztogram kiegyenlítést és adja meg a transzformált képet! (2+6 pont)
+> 
+> ```
+> 0	1	5	5	5	5	5	0
+> 1	1	1	4	5	5	5	4
+> 1	0	0	1	6	6	6	4
+> 1	0	0	3	6	6	6	4
+> 1	0	3	3	6	4	4	7
+> 0	0	3	2	6	4	4	4
+> 0	2	2	2	6	4	4	4
+> 0	2	2	2	4	6	4	0
+> ```
+> 
+> 2.	Adott egy 10 x 10-es bináris kép a közepén egy 4 x 4-es négyzettel, ahol a pixelek értéke 1, máshol pedig 0. Határozza meg és rajzolja be a gradiens irányát a Sobel operátor alkalmazása után. Határozza meg a kapott pixelértékeket (6 pont). Oldja meg a feladatot mindkét ismertetett távolságfogalom használatával! (4 pont) Hol és mennyiben tér el az eredmény? (2 pont)
+>
+> 3.	Legyen `f(i, j)= |i-j|  i, j = 0, 1, 2, …, 7` egy 8 x 8-as kép. Hajtsunk rajta végig 3 x 3-as médián szűrést (3 pont). A határpixelek ne változzanak!
 
+### 2.1. Hough Transzformáció - éldetektálás; sarokpont detektálás
+> [/hough-jellemzo_pont/](https://github.com/gabboraron/szamitogepes_kepfeldolgozas/tree/main/hough-jellemzo_pont)
+>
+> 1.	Az alábbi binarizált képen valósítson meg egy Hough transzformációt és ennek segítségével adja meg a két legrelevánsabb egyenest! (10 pont)
+> 
+> ```
+> 0	1	0	0	0	0	0	0
+> 0	1	0	0	0	0	0	0
+> 0	1	0	0	0	0	0	0
+> 0	1	1	1	1	1	1	0
+> 0	1	0	0	1	0	0	0
+> 0	1	0	0	0	1	0	0
+> 0	1	0	0	0	0	0	0
+> 0	1	0	0	0	0	0	0
+> ```
+> 
+> 2.	Határozza meg a jelzett területen 3×3 méretű átlagolással összegzett H mátrixának kisebbik sajátértékének meghatározásával, hogy melyik pixel leginkább jellemző pont!  (12 pont)
+> 
+> ```
+> 131	133	145	153	163	173
+> 88	90	99	109	115	124
+> 101	106	89	76	81	83
+> 148	162	106	43	23	29
+> 154	158	108	38	35	30
+> 143	153	109	59	64	56
+> ```
+
+### 2.2. Egységkocka forgatása
+> [/egysegkocka_forgatas/](https://github.com/gabboraron/szamitogepes_kepfeldolgozas/tree/main/egysegkocka_forgatas)
+> 
+> 1.	Egy egységkocka felének kezdeti és célállapotát mutatják az alábbi ábrák. Az objektumot nem lehet átméretezni és az xy sík alá sem lehet mozgatni. (Megjegyzés: A kocka átlós lapjának egyik élhossza gyök(2)).
+> 
+> •	Határozza meg az objektum homogén koordinátás leírómátrixát!
+> •	Határozza meg azt a transzformáció sorozatot, amely a kezdeti pozícióból a célhelyzetbe mozgatja az objektumot! Számítsa ki az objektum új pozícióját minden egyes elemi transzformáció után! (10 pont)
 
 
 
