@@ -945,6 +945,7 @@ Vágás: vágjuk a nem homogén régiókat 4 szomszédos részre
 ## Külső leírók:
 - http://www.inf.u-szeged.hu/~kato/teaching/DigitalisKepfeldolgozasTG/11-ShapeDescriptors.pdf
 ### Lánckód
+> bőveben: https://regi.tankonyvtar.hu/hu/tartalom/tamop412A/2011-0063_15_gepi_latas/ch09.html
 Körbejárjuk az objektum határát amíg körbe nem érünk, az egyes lépések irányait kódoljuk.
 - Iránykódot rendelünk minden pixelpárhoz
 - kövessük a htárt az óramutató járásának irányában.
