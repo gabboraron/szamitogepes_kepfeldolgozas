@@ -951,9 +951,26 @@ Körbejárjuk az objektum határát amíg körbe nem érünk, az egyes lépések
 - ha zaj megjelenik a kpen akkor az az objektumok határán is megjelnik.
 Valamennyire invariáns a lánckód, de nem teljes mértékben. Nem jó a forgatás, ha relatív irányban gondolkodunk. A lánckód nagyon hosszú lehet. Gyakorlatban nem túl hatékony megoldások, poligonokkal való közelítés jobb lehet.
 
-**Differenciált lánckód:** Tekintsük körkörös sorozatnak a lánckódot és számoljuk ki a differenciákat két egymás utáni elemre vonatkozóan.
+> *pl:*
+> 
+> Általában két különböző felosztást különböztetünk meg, a `4` és a `8` irányú felosztást:
+> 
+> ![lánckód irányai](https://regi.tankonyvtar.hu/hu/tartalom/tamop412A/2011-0063_15_gepi_latas/images/09_01.png) 
+> 
+> Ekkor ha van a következő képünk, aminek az alábbiak a határpontjai:
+> 
+> ![lánckód kép határa](https://regi.tankonyvtar.hu/hu/tartalom/tamop412A/2011-0063_15_gepi_latas/images/ChainCode02a.png)
+> 
+> Akkor miután mintavételeztünk a pontokból, hogy ne mindet használjuk, minden egyes maradék pontra ráillesztjük ezt a fenti "csilagot":
+> 
+> ![illesztve a lánckód](https://regi.tankonyvtar.hu/hu/tartalom/tamop412A/2011-0063_15_gepi_latas/images/ChainCode02b.png)
+> 
+> Tehát a kapott lánckód a bal oldalon, a 4 ágú csillaggal, ha a *legfelső bal oldali pont*ból indultunk el: `0033333323221211101101`
 
-**Alakszám:** a differenciák körkörös sorozatában a legkisebb egész szám.
+**Differenciált lánckód:** Tekintsük körkörös sorozatnak a lánckódot és számoljuk ki a differenciákat két egymás utáni elemre vonatkozóan, azaz **az egymást követő elemek különbségét képezzük (modulo 4 vagy 8), így az egymást követő irányok változását tárolhatjuk el.** *pl: 4 ágú "csillagra":`030000031303130031013`*
+
+**Alakszám:** a differenciák körkörös sorozatában a legkisebb egész szám, ez a kiindulóponttól való függés megszűntetése miatt előnyös. *pl: `000003130313003101303`*
+
 - `n`-ed rendű alakok: n elemű lánckóóddal elírható zárt alakok lehetséges fomái
 *pl:*
 ```
