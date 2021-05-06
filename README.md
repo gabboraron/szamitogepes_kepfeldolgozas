@@ -2,7 +2,7 @@
 - [Kató Zoltán - Digitális képfeldolgozás](http://www.inf.u-szeged.hu/~kato/teaching/DigitalisKepfeldolgozasTG/)
   - [Digitális képfeldolgozás gyakorlat](http://www.inf.u-szeged.hu/~tanacs/pyocv/index.html)
 - [R.C. Gonzales, R.E. Woods: Digital Image Processing](https://github.com/gabboraron/szamitogepes_kepfeldolgozas/blob/main/Digital%20Image%20Processing%203rd%20ed.%20-%20R.%20Gonzalez%2C%20R.%20Woods-ilovepdf-compressed.pdf)
-
+- [Rövid András; Sergyán Szabolcs; Vámossy Szabolcs - A gépi látás és képfeldolgozás párhuzamos modelljei és algoritmusai](https://github.com/gabboraron/szamitogepes_kepfeldolgozas/blob/main/2011-0063_15_gepi_latas.pdf)
 
 # Számítógépes képfeldolgozás
 
@@ -1147,7 +1147,7 @@ Morphing: egyik arc egy másik arcác alakul át, és a köztes lééseket gener
 > •	Határozza meg azt a transzformáció sorozatot, amely a kezdeti pozícióból a célhelyzetbe mozgatja az objektumot! Számítsa ki az objektum új pozícióját minden egyes elemi transzformáció után! (10 pont)
 
 ### 3. Alakleírók
-> []()
+> [/alakleiro/](https://github.com/gabboraron/szamitogepes_kepfeldolgozas/tree/main/alakleiro)
 >
 > 1. Tételezzük fel a következő 8-szomszédságú lánckódot, számoljuk ki az alakszámot: 076666553321212 (6 pont)
 > 
