@@ -1146,6 +1146,39 @@ Morphing: egyik arc egy másik arcác alakul át, és a köztes lééseket gener
 > •	Határozza meg az objektum homogén koordinátás leírómátrixát!
 > •	Határozza meg azt a transzformáció sorozatot, amely a kezdeti pozícióból a célhelyzetbe mozgatja az objektumot! Számítsa ki az objektum új pozícióját minden egyes elemi transzformáció után! (10 pont)
 
+### 3. Alakleírók
+> []()
+>
+> 1. Tételezzük fel a következő 8-szomszédságú lánckódot, számoljuk ki az alakszámot: 076666553321212 (6 pont)
+> 
+> 
+> ```
+> 64	67	83	122	146	140	142	142
+> 66	73	96	129	146	141	139	143
+> 68	82	101	137	147	140	147	139
+> 70	91	135	147	155	156	151	140
+> 70	95	137	155	156	151	140	143
+> 69	83	141	156	160	156	146	150
+> 68	87	126	153	163	158	152	155
+> 68	88	126	153	164	158	155	155
+> ```
+> 2.	A fenti tömb egy kép intenzitásértékeit tartalmazza. Hajtsunk végre iterációs küszöbölést (Isodata algoritmus) (6 pont). Teszteljük a Niblack módszert is 4 × 4-es ablakméretre (6 pont).
+> 
+> 3.	Tételezzük fel a következő bináris képet, ahol az egyesek az objektumot jelölik. Határozzuk meg az első kettő Hu-féle invariánst (8 pont), határozza meg a nyomatéki főtengely irányát és rajzolja be a képre (4 pont)!
+> 
+> ```
+> 0	0	0	0	0	0	0	0	0	0
+> 0	0	0	0	0	0	0	0	0	0
+> 0	0	1	1	1	0	1	1	0	0
+> 0	0	0	1	1	1	1	0	0	0
+> 0	0	0	1	1	1	1	0	0	0
+> 0	0	0	0	0	1	1	0	0	0
+> 0	0	0	0	0	0	0	0	0	0
+> 0	0	0	0	0	0	0	0	0	0
+> ```
+> 4.	Egy a oldalú négyzet csúcsával úgy áll, hogy súlypontja éppen az origóban van az átlók pedig az x és y tengelyek irányában helyezkednek el. Rajzolja meg a négyzet szignatúrájának diagramját, ha a vízszintes iránytól indulunk és a szög függvényében a gradiens irányát vesszük fel függvényként! (8 pont)
+
+
 
 
 
