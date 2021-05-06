@@ -482,6 +482,7 @@ A mátrix deredmináns érétéékéhez hozzáadjuk a főátlók összegét, és
 cél: az E(x,y) képen találjuk meg a vonalakat és határozuk meg azok egyenletét
 
 > ## [Hough transzformáció](https://hu.qaz.wiki/wiki/Hough_transform)
+> [COMP 4900D - Hough Transform](http://people.scs.carleton.ca/~c_shu/Courses/comp4900d/notes/lect10_hough.pdf)
 > 
 > *kulcs:* használjunk paraméterekt ahol a bonyolult probléma az egyszerűbb lokális maximumok megtalálását jelenti
 > 
